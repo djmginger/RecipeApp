@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Recipe Form</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.0/css/bootstrap.min.css}"/>
+  <script th:src="@{/webjars/bootstrap/5.1.0/js/bootstrap.min.js}"></script>
+  <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+</head>
+<body>
+<div class="container-fluid" style="margin-top: 20px">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form th:object="${recipe}" th:action="@{/recipe}" method="post">
+        <div th:if="${#fields.hasErrors('*')}" class="alert-danger">
+          <p>Please Correct Errors Below</p>
+        </div>
+        <input type="hidden" th:field="*{id}"/>
+        <div class="panel-group">
+          <div class="card card-primary border border-primary" style="margin: 20px 0">
+            <div class="card-header bg-primary text-light">
+              <h6 class="card-title">Edit Recipe Information</h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 form-group">
+                  <input id="description" type="text" class="form-control" th:errorclass="is-invalid" th:field="*{description}"/>
+                  <label for="description">Recipe Description:</label>
+                  <div class="invalid-feedback">
+                    <p th:if="${#fields.hasErrors('description')}" th:errors="*{description}" ></p>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3 form-group">
+                  <label>Categories:</label>
+                </div>
+                <div class="col-md-9 form-group">
+                  <div class="radio">
+                    <label>
+                      <input type="checkbox" value=""/>
+                      Cat 1
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="checkbox" value=""/>
+                      Cat 2
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3 form-group">
+                  <label for="prepTime">Prep Time:</label>
+                  <input id="prepTime" type="text" class="form-control" th:errorclass="is-invalid" th:field="*{prepTime}"/>
+                  <div class="invalid-feedback">
+                    <p th:if="${#fields.hasErrors('prepTime')}" th:errors="*{prepTime}" ></p>
+                  </div>
+                </div>
+                <div class="col-md-3 form-group">
+                  <label for="cookTime">Cook Time:</label>
+                  <input id="cookTime" type="text" class="form-control" th:errorclass="is-invalid" th:field="*{cookTime}"/>
+                  <div class="invalid-feedback">
+                    <p th:if="${#fields.hasErrors('cookTime')}" th:errors="*{cookTime}" ></p>
+                  </div>
+                </div>
+                <div class="col-md-3 form-group">
+                  <label>Difficulty:</label>
+                  <select class="form-control" th:field="*{difficulty}">
+                    <option th:each="difficultyValue : ${T(com.redheaddev.springframework.domain.Difficulty).values()}"
+                            th:value="${difficultyValue.name()}"
+                            th:text="${difficultyValue.name()}">val</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3 form-group">
+                  <label for="servings">Servings:</label>
+                  <input id="servings" type="text" class="form-control" th:errorclass="is-invalid" th:field="*{servings}"/>
+                  <div class="invalid-feedback">
+                    <p th:if="${#fields.hasErrors('servings')}" th:errors="*{servings}" ></p>
+                  </div>
+                </div>
+                <div class="col-md-3 form-group">
+                  <label>Source:</label>
+                  <input type="text" class="form-control" th:field="*{source}"/>
+                </div>
+                <div class="col-md-3 form-group">
+                  <label for="url">URL:</label>
+                  <input id="url" type="text" class="form-control" th:errorclass="is-invalid" th:field="*{url}"/>
+                  <div class="invalid-feedback">
+                    <p th:if="${#fields.hasErrors('url')}" th:errors="*{url}" ></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card card-primary border border-primary" style="margin: 20px 0">
+            <div class="card-header bg-primary text-light">
+              <div class="row justify-content-center">
+                <div class="col-md-11">
+                  <h6 class="card-title">Ingredients</h6>
+                </div>
+                <div class="col-md-1">
+                  <a class="btn btn-light" href="#" role="button">Edit</a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <div class="col-md-12">
+                  <ul>
+                    <li th:remove="all">1 Cup of milk</li>
+                    <li th:remove="all">1 Teaspoon of chocolate</li>
+                    <li th:each="ingredient : ${recipe.ingredients}"
+                        th:text="${ingredient.amount + ' '
+                                            + ingredient.uom.description + ' - '
+                                            + ingredient.description}">
+                    </li>
+                  </ul>
+                  <div th:each="ingredientEach, idx : ${recipe.ingredients}" >
+                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].id}" />
+                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].description}" />
+                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].amount}" />
+                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].uom.id}" />
+                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].uom.description}" />
+                  </div>
+                  <div th:each="catEach, idx : ${recipe.categories}" >
+                    <input type="hidden" th:field="*{categories[__${idx.index}__].id}" />
+                    <input type="hidden" th:field="*{categories[__${idx.index}__].description}" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card card-primary border border-primary" style="margin: 20px 0">
+            <div class="card-header bg-primary text-light">
+              <h6 class="card-title">Directions</h6>
+            </div>
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <div class="col-md-12 form-group">
+                  <textarea id="directions" row="3" class="form-control" th:errorclass="is-invalid" th:field="*{directions}"></textarea>
+                  <div class="invalid-feedback">
+                    <p th:if="${#fields.hasErrors('directions')}" th:errors="*{directions}" ></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card card-primary border border-primary" style="margin: 20px 0">
+            <div class="card-header bg-primary text-light">
+              <h6 class="card-title">Notes</h6>
+            </div>
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <div class="col-md-12 form-group">
+                  <textarea class="form-control" row="3" th:field="*{notes.recipeNotes}"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
