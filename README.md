@@ -7,3 +7,5 @@ Download and extract the project and open it in your preferred IDE.
 Download, install, and run a local MongoDB server (This project will eventually be updated to use an embedded server)
 
 Once that is complete, you should be able to simply run the program via Spring5RecipieAppApplication.java file from your IDE.
+
+Once the project is running, open your web-browser and go to http://localhost:8080/ (this should be the default port for the web server). 
